@@ -9,10 +9,10 @@ import {
   register,
   // resetPassword,
 } from "../controllers/AuthController.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 
-import { isAuthenticated } from "../middlewares/auth.js";
 
-// import { approveContact } from "../controllers/ContactController.js";
+import { approveContact } from "../controllers/ContactController.js";
 
 const router = express.Router();
 

@@ -18,7 +18,6 @@ if (!fs.existsSync(fontPath)) {
   // You might want to throw an error here or have a fallback mechanism
   // For now, this log will be crucial for debugging on the server.
 } else {
-  console.log(`Registering font from: ${fontPath}`);
   registerFont(fontPath, {
     family: "Garet-Heavy", // This is the name you'll use in ctx.font
     weight: "normal",
@@ -89,7 +88,6 @@ export const printMarksheet = async (id) => {
     drawTextWithSpacing(`${marksheet.overallGrade}`, 844, 1080, 6);
 
     return canvas.toBuffer("image/png");
-    
   } catch (error) {
     console.error("Error generating certificate:", error);
     throw error;

@@ -8,6 +8,8 @@ import {
   getAllAdmissions,
   updateAdmission,
 } from "../controllers/AdmissionController.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
 
 const storage = multer.memoryStorage();
 
@@ -44,6 +46,8 @@ const router = express.Router();
 // Route for new admission with file upload
 router.post(
   "/new-admission",
+  isAuthenticated,
+  isAdmin,
   upload.fields([{ name: "photo", maxCount: 1 }, { name: "document" }]),
   createAdmission
 );
@@ -51,12 +55,19 @@ router.post(
 router.get("/all-admission", getAllAdmissions);
 
 router.get("/:id", getAdmissionById);
-router.delete("/:id", deleteAdmission);
+router.delete("/:id", isAuthenticated, isAdmin, deleteAdmission);
 
-router.put("/admission-approve/:id", approveAdmission);
+router.put(
+  "/admission-approve/:id",
+  isAuthenticated,
+  isAdmin,
+  approveAdmission
+);
 
 router.put(
   "/:id",
+  isAuthenticated,
+  isAdmin,
   upload.fields([{ name: "photo", maxCount: 1 }, { name: "document" }]),
   updateAdmission
 );

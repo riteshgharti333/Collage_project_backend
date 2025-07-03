@@ -10,6 +10,10 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    smCourseImage: {
+      type: String,
+      required: true,
+    },
     courseType: {
       type: String,
       required: true,
@@ -78,6 +82,12 @@ const courseSchema = new mongoose.Schema(
     overviewDesc: {
       type: String,
     },
+  //    slug: {
+  //   type: String,
+  //   required: true,
+  //   unique: true,
+  //   index: true,
+  // },
   },
   {
     timestamps: true,

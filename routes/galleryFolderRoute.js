@@ -6,20 +6,20 @@ import {
   deleteGalleryFolder,
   getAllGalleryFolders,
   getSingleGalleryFolder,
+  reorderGalleryFolder,
   updateGalleryFolder,
 } from "../controllers/GalleryFolderController.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
 
-// ✅ Multer memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ✅ Multer handles both fields
 const galleryUpload = upload.fields([
   { name: "folderImage", maxCount: 1 },
   { name: "galleryImages" },
 ]);
 
-// ✅ Middleware to compress all images in memory (no saving to disk)
 const processImages = async (req, res, next) => {
   if (!req.files) return next();
 
@@ -28,10 +28,9 @@ const processImages = async (req, res, next) => {
       return await sharp(fileBuffer)
         .toFormat("webp")
         .webp({ quality: 70 })
-        .toBuffer(); // returns compressed buffer
+        .toBuffer();
     };
 
-    // ✅ folderImage (single)
     if (req.files.folderImage) {
       const original = req.files.folderImage[0];
       const compressed = await compressToWebp(original.buffer);
@@ -40,14 +39,13 @@ const processImages = async (req, res, next) => {
       req.files.folderImage[0].mimetype = "image/webp";
     }
 
-    // ✅ galleryImages (multiple)
     if (req.files.galleryImages) {
       await Promise.all(
         req.files.galleryImages.map(async (img) => {
           const compressed = await compressToWebp(img.buffer);
           img.buffer = compressed;
           img.mimetype = "image/webp";
-        }),
+        })
       );
     }
 
@@ -62,15 +60,26 @@ const router = express.Router();
 
 router.post(
   "/new-gallery-folder",
+  isAuthenticated,
+  isAdmin,
   galleryUpload,
   processImages,
-  createGalleryFolder,
+  createGalleryFolder
 );
 
-router.put("/:id", galleryUpload, processImages, updateGalleryFolder);
+router.put(
+  "/:id",
+  isAuthenticated,
+  isAdmin,
+  galleryUpload,
+  processImages,
+  updateGalleryFolder
+);
 
 router.get("/all-gallery-folders", getAllGalleryFolders);
 router.get("/:id", getSingleGalleryFolder);
-router.delete("/:id", deleteGalleryFolder);
+router.delete("/:id", isAuthenticated, isAdmin, deleteGalleryFolder);
+
+router.patch("/reorder", isAuthenticated, isAdmin, reorderGalleryFolder);
 
 export default router;

@@ -1,34 +1,37 @@
 import mongoose from "mongoose";
 
-const alumniSchema = new mongoose.Schema(
+const contactDetailsSchema = new mongoose.Schema(
   {
-    name: {
+    phoneNumber: {
       type: String,
       required: true,
       trim: true,
     },
-    image: {
-      type: String,
-      required: true,
-    },
-    designation: {
+    email: {
       type: String,
       required: true,
       trim: true,
     },
-    company: {
+    address: {
       type: String,
       required: true,
       trim: true,
     },
-    location: {
+    facebookLink: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
-    order: { type: Number, default: 0 },
+    instagramLink: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-export const Alumni = mongoose.model("Alumni", alumniSchema);
+export const ContactDetails = mongoose.model(
+  "ContactDetails",
+  contactDetailsSchema
+);

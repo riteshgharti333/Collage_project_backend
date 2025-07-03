@@ -55,7 +55,7 @@ export const createAlumni = catchAsyncError(async (req, res, next) => {
 // Get Alumni List
 
 export const getAlumni = catchAsyncError(async (req, res, next) => {
-  const alumni = await Alumni.find().sort({ createdAt: -1 });
+  const alumni = await Alumni.find().sort({ order: 1 });
 
   res.status(200).json({
     result: 1,
@@ -148,3 +148,23 @@ export const deleteAlumni = catchAsyncError(async (req, res, next) => {
     message: "Alumni deleted successfully",
   });
 });
+
+
+
+// Reorder Alumni
+
+export const reorderAlumni = catchAsyncError(async (req, res, next) => {
+  const { order } = req.body; 
+
+  if (!Array.isArray(order)) {
+    return res.status(400).json({ result: 0, message: "Invalid input" });
+  }
+
+  await Promise.all(
+    order.map((id, index) =>
+      Alumni.findByIdAndUpdate(id, { order: index }, { new: true })
+    )
+  );
+
+  res.status(200).json({ result: 1, message: "Alumni reordered successfully" });
+})

@@ -10,13 +10,11 @@ const processImage = async (req, res, next) => {
   if (!req.file) return next();
 
   try {
-    // Compress the image and convert to WebP format
     const compressedBuffer = await sharp(req.file.buffer)
       .toFormat("webp")
       .webp({ quality: 70 })
       .toBuffer();
 
-    // Replace original buffer with compressed one
     req.file.buffer = compressedBuffer;
     req.file.mimetype = "image/webp";
 

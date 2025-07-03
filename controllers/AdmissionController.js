@@ -35,9 +35,8 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("All fields are required!", 400));
   }
 
-  let imageUrl;
+  let imageUrl = null;
   try {
-    // Upload profile photo (passport photo)
     const profilePhoto = req.files.photo[0];
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(

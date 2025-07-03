@@ -8,24 +8,37 @@ import {
 } from "../controllers/CourseController.js";
 
 import imageHandler from "../middlewares/multer.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
 
 const router = express.Router();
 
 router.post(
   "/new-course",
-  imageHandler.upload.single("bannerImage"),
+  isAuthenticated,
+  isAdmin,
+  imageHandler.upload.fields([
+    { name: "bannerImage", maxCount: 1 },
+    { name: "smCourseImage", maxCount: 1 },
+  ]),
   imageHandler.processImage,
   createCourse
 );
+
 router.get("/all-course", getAllCourses);
 
 router.get("/:id", getCourseById);
 
-router.delete("/:id", deleteCourse);
+router.delete("/:id", isAuthenticated, isAdmin, deleteCourse);
 
 router.put(
   "/:id",
-  imageHandler.upload.single("bannerImage"),
+  isAuthenticated,
+  isAdmin,
+  imageHandler.upload.fields([
+    { name: "bannerImage", maxCount: 1 },
+    { name: "smCourseImage", maxCount: 1 },
+  ]),
   imageHandler.processImage,
   updateCourse
 );

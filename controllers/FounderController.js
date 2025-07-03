@@ -48,7 +48,7 @@ export const createFounder = catchAsyncError(async (req, res, next) => {
 
 // GET ALL FOUNDERS
 export const getAllFounders = catchAsyncError(async (req, res, next) => {
-  const founders = await Founder.find();
+  const founders = await Founder.find().sort({ order: 1 });
 
   res.status(200).json({
     result: 1,
@@ -160,3 +160,22 @@ export const deleteFounder = catchAsyncError(async (req, res, next) => {
     message: "Founding member deleted successfully",
   });
 });
+
+
+// Reorder Mentor
+
+export const reorderFounder = catchAsyncError(async (req, res, next) => {
+  const { order } = req.body; 
+
+  if (!Array.isArray(order)) {
+    return res.status(400).json({ result: 0, message: "Invalid input" });
+  }
+
+  await Promise.all(
+    order.map((id, index) =>
+      Founder.findByIdAndUpdate(id, { order: index }, { new: true })
+    )
+  );
+
+  res.status(200).json({ result: 1, message: "Mentor reordered successfully" });
+})

@@ -1,27 +1,32 @@
 import express from "express";
-import {
-  createFounder,
-  getAllFounders,
-  getFounder,
-  updateFounder,
-  deleteFounder,
-  reorderFounder,
-} from "../controllers/FounderController.js";
 
 const router = express.Router();
 
 import imageHandler from "../middlewares/multer.js";
+import {
+  deleteHomeContent,
+  getAllHomeContent,
+  getSingleHomeContent,
+  newHomeContent,
+  updateHomeContent,
+} from "../controllers/HomeContentController.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 
 router.post(
-  "/new-founder",
+  "/new-homeContent-image",
   isAuthenticated,
   isAdmin,
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  createFounder
+  newHomeContent
 );
+
+router.get("/all-homeContent-images", getAllHomeContent);
+
+router.get("/:id", getSingleHomeContent);
+
+router.delete("/:id", isAuthenticated, isAdmin, deleteHomeContent);
 
 router.put(
   "/:id",
@@ -29,15 +34,7 @@ router.put(
   isAdmin,
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  updateFounder
+  updateHomeContent
 );
-
-router.get("/all-founders", getAllFounders);
-
-router.get("/:id", getFounder);
-
-router.delete("/:id", isAuthenticated, isAdmin, deleteFounder);
-
-router.patch("/reorder", isAuthenticated, isAdmin, reorderFounder);
 
 export default router;

@@ -29,6 +29,10 @@ const authSchema = new mongoose.Schema(
         message: "Password must be at least 8 characters long",
       },
     },
+     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

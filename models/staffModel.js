@@ -21,8 +21,9 @@ const staffSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    order: { type: Number, default: 0 },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const Staff = mongoose.model("Staff", staffSchema);

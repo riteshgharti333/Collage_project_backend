@@ -25,7 +25,7 @@ export const createStaff = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        },
+        }
       );
 
       streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -53,7 +53,7 @@ export const createStaff = catchAsyncError(async (req, res, next) => {
 
 //  GET ALL STAFF
 export const getAllStaff = catchAsyncError(async (req, res, next) => {
-  const staff = await Staff.find();
+  const staff = await Staff.find().sort({ order: 1 });
 
   res.status(200).json({
     result: 1,
@@ -96,7 +96,7 @@ export const updateStaff = catchAsyncError(async (req, res, next) => {
       // 🔥 Destroy old image from Cloudinary
       const oldImagePublicId = staff.image.split("/").pop().split(".")[0];
       await cloudinary.uploader.destroy(
-        `thenad_data/staff_images/${oldImagePublicId}`,
+        `thenad_data/staff_images/${oldImagePublicId}`
       );
 
       // 🔥 Upload new image using streamifier
@@ -109,7 +109,7 @@ export const updateStaff = catchAsyncError(async (req, res, next) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
 
         streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -165,4 +165,22 @@ export const deleteStaff = catchAsyncError(async (req, res, next) => {
     result: 1,
     message: "Staff member deleted successfully!",
   });
+});
+
+// Reorder Staff
+
+export const reorderStaff = catchAsyncError(async (req, res, next) => {
+  const { order } = req.body; 
+
+  if (!Array.isArray(order)) {
+    return res.status(400).json({ result: 0, message: "Invalid input" });
+  }
+
+  await Promise.all(
+    order.map((id, index) =>
+      Staff.findByIdAndUpdate(id, { order: index }, { new: true })
+    )
+  );
+
+  res.status(200).json({ result: 1, message: "Staff reordered successfully" });
 });

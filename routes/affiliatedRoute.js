@@ -9,9 +9,13 @@ import {
   getSingleAffiliated,
   newAffiliated,
 } from "../controllers/AffiliatedController.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 
 router.post(
   "/new-affiliate",
+  isAuthenticated,
+  isAdmin,
   imageHandler.upload.single("image"),
   imageHandler.processImage,
   newAffiliated
@@ -21,6 +25,6 @@ router.get("/all-affiliates", getAllAffiliated);
 
 router.get("/:id", getSingleAffiliated);
 
-router.delete("/:id", deleteAffiliated);
+router.delete("/:id", isAuthenticated, isAdmin, deleteAffiliated);
 
 export default router;

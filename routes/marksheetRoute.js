@@ -6,11 +6,13 @@ import {
   updateMarksheet,
   deleteMarksheet,
 } from "../controllers/MarksheetController.js";
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
 
 const router = express.Router();
 
 // CREATE
-router.post("/new-marksheet", createMarksheet);
+router.post("/new-marksheet", isAuthenticated, isAdmin, createMarksheet);
 
 // GET ALL
 router.get("/all-marksheets", getAllMarksheets);
@@ -19,9 +21,9 @@ router.get("/all-marksheets", getAllMarksheets);
 router.get("/:id", getSingleMarksheet);
 
 // UPDATE
-router.put("/:id", updateMarksheet);
+router.put("/:id", isAuthenticated, isAdmin, updateMarksheet);
 
 // DELETE
-router.delete("/:id", deleteMarksheet);
+router.delete("/:id", isAuthenticated, isAdmin, deleteMarksheet);
 
 export default router;

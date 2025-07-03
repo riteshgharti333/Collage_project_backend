@@ -18,8 +18,13 @@ const gallerySchema = new mongoose.Schema(
         publicId: { type: String, required: true },
       },
     ],
+    folderImagePublicId: {
+      type: String,
+      required: true,
+    },
+    order: { type: Number, default: 0 },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const GalleryFolder = mongoose.model("GalleryFolder", gallerySchema);

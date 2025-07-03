@@ -5,7 +5,12 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 
+import ErrorHandler from "./utils/errorHandler.js";
+
 import { errorMiddleware } from "./middlewares/error.js";
+
+import sitemapRoutes from "./routes/seoRoute.js";
+
 import authRouter from "./routes/authRoute.js";
 import admissionRouter from "./routes/admissionRoute.js";
 import enquiryRouter from "./routes/enquiryRoute.js";
@@ -17,7 +22,7 @@ import bannerRouter from "./routes/bannerRoute.js";
 import staffRouter from "./routes/staffRoute.js";
 import founderRouter from "./routes/founderRoute.js";
 
-import imageRouter from "./routes/imageRoute.js";
+// import imageRouter from "./routes/imageRoute.js";
 import studentRouter from "./routes/studentRoute.js";
 import certificateRouter from "./routes/certificateRoute.js";
 import printRouter from "./routes/printRoute.js";
@@ -29,6 +34,12 @@ import examRouter from "./routes/examRoute.js";
 import marksheetRouter from "./routes/marksheetRoute.js";
 import secondCertificateRouter from "./routes/secondCertificateRoute.js";
 import affiliateRouter from "./routes/affiliatedRoute.js";
+
+import aboutRouter from "./routes/aboutRoute.js";
+import homeContentRouter from "./routes/homeContentRoute.js";
+
+import homeContentDetailsRouter from "./routes/homeContentDetailsRoute.js";
+import contactDetailsRouter from "./routes/contactDetailsRoute.js";
 
 // Initialize Express app
 export const app = express();
@@ -60,7 +71,7 @@ app.use(
         callback(new ErrorHandler("Not allowed by CORS", 403));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
@@ -70,6 +81,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use("/", sitemapRoutes);
 app.use("/backend/api/auth", authRouter);
 app.use("/backend/api/admission", admissionRouter);
 app.use("/backend/api/enquiry", enquiryRouter);
@@ -78,7 +90,7 @@ app.use("/backend/api/gallery", galleryRouter);
 app.use("/backend/api/banner", bannerRouter);
 app.use("/backend/api/staff", staffRouter);
 app.use("/backend/api/founder", founderRouter);
-app.use("/backend/api/upload", imageRouter);
+// app.use("/backend/api/upload", imageRouter);
 
 app.use("/backend/api/student", studentRouter);
 
@@ -92,6 +104,12 @@ app.use("/backend/api/course", courseRouter);
 app.use("/backend/api/exam", examRouter);
 app.use("/backend/api/marksheet", marksheetRouter);
 app.use("/backend/api/affiliate", affiliateRouter);
+
+app.use("/backend/api/about", aboutRouter);
+app.use("/backend/api/home-content", homeContentRouter);
+
+app.use("/backend/api/home-content-details", homeContentDetailsRouter);
+app.use("/backend/api/contact-details", contactDetailsRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Backend");
