@@ -49,7 +49,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        }
+        },
       );
 
       streamifier.createReadStream(profilePhoto.buffer).pipe(stream);
@@ -77,7 +77,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
             (error, result) => {
               if (error) reject(error);
               else resolve(result.secure_url);
-            }
+            },
           );
 
           streamifier.createReadStream(file.buffer).pipe(stream);
@@ -117,10 +117,6 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
 // GET ALL ADMISSIONS
 export const getAllAdmissions = catchAsyncError(async (req, res, next) => {
   const admissions = await Admission.find();
-
-  if (!admissions || admissions.length === 0) {
-    return next(new ErrorHandler("No admissions form found", 404));
-  }
 
   res.status(200).json({
     result: 1,
@@ -168,7 +164,7 @@ export const deleteAdmission = catchAsyncError(async (req, res, next) => {
         .join("/")
         .split(".")[0];
       await cloudinary.uploader.destroy(
-        `thenad_data/admissions/profile_photos/${publicId}`
+        `thenad_data/admissions/profile_photos/${publicId}`,
       );
     }
 
@@ -180,7 +176,7 @@ export const deleteAdmission = catchAsyncError(async (req, res, next) => {
           `thenad_data/admissions/documents/${publicId}`,
           {
             resource_type: "raw",
-          }
+          },
         );
       });
       await Promise.all(deletePromises);
@@ -217,11 +213,11 @@ export const approveAdmission = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  // ✅ Mark as approved
+  //  Mark as approved
   admission.approved = true;
   await admission.save();
 
-  // ✅ Send confirmation email
+  //  Send confirmation email
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -312,13 +308,13 @@ export const updateAdmission = catchAsyncError(async (req, res, next) => {
         return next(
           new ErrorHandler(
             "Only JPEG/PNG/JPG/WEBP images are allowed for profile photo",
-            400
-          )
+            400,
+          ),
         );
       }
       if (profilePhoto.size > 5 * 1024 * 1024) {
         return next(
-          new ErrorHandler("Profile photo must be less than 5MB", 400)
+          new ErrorHandler("Profile photo must be less than 5MB", 400),
         );
       }
 
@@ -334,7 +330,7 @@ export const updateAdmission = catchAsyncError(async (req, res, next) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
         streamifier.createReadStream(profilePhoto.buffer).pipe(stream);
       });
@@ -361,7 +357,7 @@ export const updateAdmission = catchAsyncError(async (req, res, next) => {
         }
         if (file.size > 10 * 1024 * 1024) {
           return next(
-            new ErrorHandler("Each document must be less than 10MB", 400)
+            new ErrorHandler("Each document must be less than 10MB", 400),
           );
         }
       }
@@ -379,7 +375,7 @@ export const updateAdmission = catchAsyncError(async (req, res, next) => {
             (error, result) => {
               if (error) reject(error);
               else resolve(result.secure_url);
-            }
+            },
           );
           streamifier.createReadStream(file.buffer).pipe(stream);
         });
@@ -405,7 +401,7 @@ export const updateAdmission = catchAsyncError(async (req, res, next) => {
       photo: newImageUrl,
       document: newDocumentUrls,
     },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 
   res.status(200).json({
