@@ -42,7 +42,8 @@ authSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   // 🔹 Ensure we are not hashing an already hashed password
-  if (!this.password.startsWith("$2b$")) {
+  // Check if password is already hashed (starts with $2a$, $2b$, or $2x$)
+  if (!/^\$2[aby]\$/.test(this.password)) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 

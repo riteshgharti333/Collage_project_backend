@@ -10,15 +10,13 @@ import {
   // resetPassword,
 } from "../controllers/AuthController.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
-
-
-import { approveContact } from "../controllers/ContactController.js";
+import { loginRateLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
 router.post("/register", register);
 
-router.post("/login", login);
+router.post("/login", loginRateLimiter, login);
 
 router.post("/logout", logout);
 

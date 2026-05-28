@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 
-export const connectDB = () => {
-  mongoose
-    .connect(
-      "mongodb+srv://internationalacademydesign123:internationalacademydesign123@thenad.sxwpygf.mongodb.net/thenadData?retryWrites=true&w=majority&appName=thenad",
-    )
-    .then(() => console.log("DB Connection Successfull !"))
-
-    .catch((error) => {
-      console.log(error);
-    });
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URL);
+    console.log("DB Connection Successful!");
+    return true;
+  } catch (error) {
+    console.error("DB Connection Failed:", error.message);
+    throw error;
+  }
 };

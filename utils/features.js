@@ -10,13 +10,12 @@ export const sendCookie = (user, res, message, statusCode = 200) => {
     .cookie("sessionToken", sessionToken, {
       httpOnly: true,
       maxAge: 180 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
-      secure: process.env.NODE_ENV !== "Development",
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+      secure: process.env.NODE_ENV !== "development",
     })
     .json({
       result: 1,
       message,
-      sessionToken,
       user,
     });
 };

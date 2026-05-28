@@ -3,8 +3,11 @@ import { Auth } from "../models/authModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import { sendCookie } from "../utils/features.js";
 import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
-// import nodemailer from "nodemailer";
+
+// EMAIL VALIDATION REGEX
+const validateEmail = (email) => {
+  return /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email);
+};
 
 // REGISTER
 export const register = catchAsyncError(async (req, res, next) => {
@@ -12,6 +15,11 @@ export const register = catchAsyncError(async (req, res, next) => {
 
   if (!name || !email || !password) {
     throw new ErrorHandler("All fields are required!", 400);
+  }
+
+  // Validate email format
+  if (!validateEmail(email)) {
+    throw new ErrorHandler("Please provide a valid email address", 400);
   }
 
   const existingUser = await Auth.findOne({ email });
@@ -64,8 +72,8 @@ export const logout = catchAsyncError(async (req, res, next) => {
     .status(200)
     .cookie("sessionToken", "", {
       expires: new Date(0),
-      sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
-      secure: process.env.NODE_ENV !== "Development",
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+      secure: process.env.NODE_ENV !== "development",
       httpOnly: true,
     })
     .json({
@@ -76,10 +84,9 @@ export const logout = catchAsyncError(async (req, res, next) => {
 
 // PROFILE
 export const profile = catchAsyncError(async (req, res, next) => {
-  console.log(req.user)
   if (!req.user) {
     return next(
-      new ErrorHandler("Unauthorized: Please login to access profile", 401)
+      new ErrorHandler("Unauthorized: Please login to access profile", 401),
     );
   }
 
@@ -102,7 +109,7 @@ export const changePassword = catchAsyncError(async (req, res, next) => {
 
   if (!oldPassword || !newPassword) {
     return next(
-      new ErrorHandler("Old password and new password are required", 400)
+      new ErrorHandler("Old password and new password are required", 400),
     );
   }
 
@@ -110,8 +117,8 @@ export const changePassword = catchAsyncError(async (req, res, next) => {
     return next(
       new ErrorHandler(
         "Unauthorized: You must be logged in to change password",
-        401
-      )
+        401,
+      ),
     );
   }
 
@@ -129,14 +136,14 @@ export const changePassword = catchAsyncError(async (req, res, next) => {
   const isSamePassword = await bcrypt.compare(newPassword, user.password);
   if (isSamePassword) {
     return next(
-      new ErrorHandler("New password cannot be the same as the old one", 400)
+      new ErrorHandler("New password cannot be the same as the old one", 400),
     );
   }
 
   await user.updatePassword(newPassword);
 
   res.status(200).json({
-    success: true,
+    result: 1,
     message: "Password changed successfully",
   });
 });
