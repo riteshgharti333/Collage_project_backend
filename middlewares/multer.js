@@ -1,11 +1,11 @@
 import multer from "multer";
 import sharp from "sharp";
 
-// ✅ Multer configuration (in-memory storage)
+//  Multer configuration (in-memory storage)
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ✅ Middleware: compress image in memory using Sharp
+//  Middleware: compress image in memory using Sharp
 const processImage = async (req, res, next) => {
   if (!req.file) return next();
 
